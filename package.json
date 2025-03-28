@@ -1,0 +1,23 @@
+{
+  "name": "safe-token-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for token security analysis",
+  "main": "src/index.js",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "node-cache": "^5.1.2",
+    "nodemailer": "^6.10.0",
+    "pdf-lib": "^1.17.1",
+    "telegraf": "^4.16.3",
+    "web3": "^4.16.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": ["token", "security", "blockchain", "telegram", "bot"],
+  "author": "",
+  "license": "ISC"
+}
