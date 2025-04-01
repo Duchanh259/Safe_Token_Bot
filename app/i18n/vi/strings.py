@@ -18,7 +18,7 @@ VI_STRINGS = {
     'command_help': """Danh sách lệnh:
 /start - Khởi động bot
 /help - Hiển thị trợ giúp
-/check - Kiểm tra bảo mật và phân tích token nâng cao
+/check - Kiểm tra bảo mật token
 /report - Tạo báo cáo PDF
 /balance - Xem số dư của bạn
 /referral - Xem link giới thiệu của bạn
@@ -35,25 +35,21 @@ VI_STRINGS = {
     'referral_stats': 'Thống kê giới thiệu của bạn:\n- Giới thiệu trực tiếp (F1): {direct}\n- Giới thiệu gián tiếp (F2): {indirect}',
     
     # Token analysis
-    'select_analysis_type': 'Vui lòng chọn loại phân tích:',
-    'basic_security_check': 'Kiểm tra bảo mật cơ bản',
-    'advanced_analysis': 'Phân tích chi tiết nâng cao',
-    'analysis_type_selected': 'Bạn đã chọn: Phân tích {analysis_type}',
     'enter_address': 'Vui lòng nhập địa chỉ hợp đồng token:',
     'processing_address': 'Đang xử lý địa chỉ...',
     'address_required': 'Vui lòng nhập địa chỉ hợp đồng hợp lệ.',
-    'analyzing_token': 'Đang phân tích token {address} trên {network}. Vui lòng đợi, quá trình này có thể mất một lúc...',
+    'analyzing_token': 'Đang phân tích token {address} trên mạng {network}. Vui lòng đợi, quá trình này có thể mất một lúc...',
     'security_check_results': '🔒 KẾT QUẢ KIỂM TRA BẢO MẬT 🔒\n\n✅ Không phát hiện honeypot\n✅ Hợp đồng đã được xác minh\n✅ Không có hàm tự hủy\n✅ Không có hàm danh sách đen\n✅ Không có hàm tạo thêm token\n\nĐiểm bảo mật tổng thể: 95/100',
     'advanced_analysis_results': '📊 KẾT QUẢ PHÂN TÍCH NÂNG CAO 📊\n\nPhân phối Token:\n- 10 người sở hữu lớn nhất nắm giữ 35% tổng cung\n- Ví nhà phát triển nắm giữ 3% tổng cung\n- Thanh khoản đã được khóa trong 365 ngày\n\nTác động khi Swap (1 ETH):\n- Thuế mua: 2%\n- Thuế bán: 3%\n- Ảnh hưởng giá: 0.5%\n\nĐánh giá rủi ro: THẤP',
     'token_analysis_result': 'Kết quả phân tích Token:',
-    'token_name': 'Tên: {name}',
-    'token_symbol': 'Ký hiệu: {symbol}',
-    'token_total_supply': 'Tổng cung: {supply}',
-    'token_decimals': 'Số thập phân: {decimals}',
-    'token_address': 'Địa chỉ hợp đồng: {address}',
-    'token_blockchain': 'Blockchain: {blockchain}',
-    'token_owner': 'Chủ sở hữu: {owner}',
-    'token_risk_level': 'Mức độ rủi ro: {level}',
+    'token_name': 'Tên',
+    'token_symbol': 'Ký hiệu',
+    'token_total_supply': 'Tổng cung',
+    'token_decimals': 'Số thập phân',
+    'token_address': 'Địa chỉ hợp đồng',
+    'token_blockchain': 'Blockchain',
+    'token_owner': 'Chủ sở hữu',
+    'token_risk_level': 'Mức độ rủi ro',
     'token_security_issues': 'Vấn đề bảo mật:',
     'token_no_security_issues': 'Không tìm thấy vấn đề bảo mật!',
     'token_not_found': 'Không tìm thấy token hoặc không phải là token hợp lệ',
@@ -109,53 +105,43 @@ VI_STRINGS = {
                  "/language - Thay đổi ngôn ngữ",
     'command_list_intro': "Đây là các lệnh để sử dụng Bot:",
     
-    # Token security check
-    'token_security_check': 'KẾT QUẢ KIỂM TRA BẢO MẬT',
-    'honeypot_check': 'Không phát hiện honeypot' if not '{result}' else 'CẢNH BÁO: Phát hiện có khả năng là honeypot',
-    'contract_verified': 'Hợp đồng đã được xác minh' if '{result}' else 'CẢNH BÁO: Hợp đồng chưa được xác minh',
-    'self_destruct_check': 'Không có hàm tự hủy' if not '{result}' else 'CẢNH BÁO: Hợp đồng chứa hàm tự hủy',
-    'blacklist_check': 'Không có hàm danh sách đen' if not '{result}' else 'CẢNH BÁO: Hợp đồng chứa hàm danh sách đen',
-    'mint_function_check': 'Không có hàm tạo thêm token' if not '{result}' else 'CẢNH BÁO: Hợp đồng chứa hàm tạo thêm token',
-    'security_score': 'Điểm bảo mật tổng thể: {score}/100',
-    
-    # Advanced analysis
-    'advanced_analysis_results_title': 'KẾT QUẢ PHÂN TÍCH NÂNG CAO',
-    'token_distribution': 'Phân phối Token',
-    'top_holders': '{count} người sở hữu lớn nhất nắm giữ {percentage}% tổng cung',
-    'largest_holder': 'Người sở hữu lớn nhất nắm giữ {percentage}% tổng cung',
-    'liquidity_status': 'Thanh khoản đã được khóa trong {days} ngày',
-    'swap_impact': 'Tác động khi Swap (1 ETH)',
-    'buy_tax': 'Thuế mua: {percentage}%',
-    'sell_tax': 'Thuế bán: {percentage}%',
-    'price_impact': 'Ảnh hưởng giá: {percentage}%',
-    'risk_assessment': 'Đánh giá rủi ro',
-    
-    # Contract analysis messages
-    'contract_analysis_title': 'PHÂN TÍCH SMART CONTRACT',
-    'basic_info_title': 'THÔNG TIN TOKEN',
-    'dangerous_functions_title': 'CÁC CHỨC NĂNG NGUY HIỂM',
-    'contract_assessment': 'ĐÁNH GIÁ',
-    'contract_verified': 'Hợp đồng đã xác minh',
-    'contract_not_verified': 'Hợp đồng chưa xác minh',
-    'unlimited_mint': 'Có thể phát hành thêm Token vô hạn',
-    'blacklist_function_warning': 'Hợp đồng có chức năng khóa ví người dùng',
-    'selfdestruct_function_warning': 'Hợp đồng có chức năng tự hủy',
-    'pause_function_warning': 'Chủ hợp đồng có thể tạm dừng giao dịch (chỉ mua được, không bán được)',
-    'modify_balance_warning': 'Chủ hợp đồng có thể sửa đổi số dư từ ví người dùng',
-    'honeypot_warning': 'Có khả năng là honeypot',
-    'no_dangerous_functions': 'Không phát hiện các chức năng nguy hiểm trong hợp đồng này',
-    'top_holders_list': 'Danh sách ví Holder lớn nhất',
-    'liquidity_pool': 'Bể thanh khoản (DEX): {status}',
-    'token_taxes': 'Thuế giao dịch: Mua {buy}% / Bán {sell}%',
-    'not_verified': 'Chưa xác minh',
-    'disclaimer': 'Ghi chú: Bot tổng hợp và đánh giá độ rủi ro dựa vào source code trực tiếp trên Blockchain, thông tin mang tính chất tham khảo. Người dùng tự cân nhắc và chịu trách nhiệm với quyết định đầu tư của mình!',
-    'no_holder_data': 'Không có dữ liệu về holder',
+    # Security analysis header
+    'security_analysis_header': 'PHÂN TÍCH SMART CONTRACT',
+    'token_info_header': 'THÔNG TIN TOKEN',
+    'dangerous_functions': 'CÁC CHỨC NĂNG NGUY HIỂM',
+    'risk_assessment': 'ĐÁNH GIÁ',
     
     # Token info
-    'contract_owner': 'Ví chủ hợp đồng: {owner}',
+    'total_supply': 'Tổng cung',
+    'holder_count': 'Tổng số ví Holder',
+    'dex_liquidity': 'Bể thanh khoản (DEX)',
+    'transaction_tax': 'Thuế giao dịch',
+    'tax_info': 'Mua {buy} / Bán {sell}',
+    'contract_owner': 'Ví chủ hợp đồng',
     
-    # Risk level descriptions
-    'risk_level_critical_desc': 'CỰC KỲ RỦI RO: Hợp đồng này chứa lỗ hổng rất nguy hiểm, nguy cơ bị lừa đảo khi đầu tư rất cao, hãy cân nhắc thật kỹ',
-    'risk_level_high_desc': 'RỦI RO CAO: Hợp đồng tích hợp những chức năng có khả năng gây thiệt hại cho NĐT, hãy tìm hiểu thật kỹ về dự án trước khi ra quyết định đầu tư',
-    'risk_level_low_desc': 'ÍT RỦI RO: Hợp đồng không có chức năng nguy hiểm, cần đánh giá thêm các yếu tố khác trước khi ra quyết định',
+    # Dangerous functions
+    'has_mint_warning': 'Có thể phát hành thêm Token vô hạn',
+    'has_blacklist_warning': 'Hợp đồng có chức năng khóa ví người dùng',
+    'has_pause_warning': 'Chủ hợp đồng có thể tạm dừng giao dịch (chỉ mua được, không bán được)',
+    'has_revoke_warning': 'Chủ hợp đồng có thể sửa đổi số dư từ ví người dùng',
+    'has_self_destruct_warning': 'Hợp đồng có chức năng tự hủy',
+    'honeypot_warning': 'Có khả năng là honeypot',
+    'no_dangerous_functions': 'Không phát hiện chức năng nguy hiểm trong hợp đồng này',
+    'contract_not_verified_warning': 'Hợp đồng chưa được xác minh trên Etherscan',
+    
+    # Risk assessment
+    'critical_risk': 'CỰC KỲ RỦI RO',
+    'critical_risk_description': 'CỰC KỲ RỦI RO: Hợp đồng này chứa lỗ hổng rất nguy hiểm, nguy cơ bị lừa đảo khi đầu tư rất cao, hãy cân nhắc thật kỹ',
+    'high_risk': 'RỦI RO CAO',
+    'high_risk_description': 'RỦI RO CAO: Hợp đồng tích hợp những chức năng có khả năng gây thiệt hại cho NĐT, hãy tìm hiểu thật kỹ về dự án trước khi ra quyết định đầu tư',
+    'low_risk_description': 'Không phát hiện các chức năng nguy hiểm trong hợp đồng này, tìm hiểu kỹ các yếu tố khác trước khi quyết định đầu tư',
+    
+    # Check result
+    'check_failed': 'Kiểm tra token thất bại. Vui lòng thử lại sau.',
+    
+    # Status
+    'not_verified': 'Chưa xác minh',
+    
+    # Disclaimer
+    'analysis_disclaimer': 'Ghi chú: Bot tổng hợp và đánh giá độ rủi ro dựa vào source code trực tiếp trên Blockchain, thông tin mang tính chất tham khảo. Người dùng tự cân nhắc và chịu trách nhiệm với quyết định đầu tư của mình!',
 } 

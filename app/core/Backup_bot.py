@@ -150,16 +150,15 @@ class TelegramBot:
     
     async def language_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle the /language command to change language."""
-        # Show language selection menu in horizontal layout
+        # Show language selection menu
         keyboard = []
-        row = []
         for lang_code, lang_name in SUPPORTED_LANGUAGES.items():
-            button = InlineKeyboardButton(
-                text=lang_name, 
-                callback_data=f"lang_{lang_code}"
-            )
-            row.append(button)
-        keyboard.append(row)
+            keyboard.append([
+                InlineKeyboardButton(
+                    text=lang_name, 
+                    callback_data=f"lang_{lang_code}"
+                )
+            ])
         
         reply_markup = InlineKeyboardMarkup(keyboard)
         
@@ -178,10 +177,10 @@ class TelegramBot:
         await update.message.reply_text(help_text)
     
     async def check_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle the /check command for token security check."""
+        """Handle the /check command for both basic token security check and advanced analysis."""
         language = context.user_data.get('language', 'en')
         
-        # Set analysis type to 'complete'
+        # Set analysis type to 'complete' to indicate both basic and advanced
         context.user_data['analysis_type'] = 'complete'
         
         # Show blockchain options directly
@@ -472,7 +471,7 @@ class TelegramBot:
                 
                 # Format and display combined analysis results
                 analysis_message = self._format_security_results(token_check_result, language)
-                await update.message.reply_text(analysis_message, parse_mode="HTML", disable_web_page_preview=True)
+                await update.message.reply_text(analysis_message)
                 
                 # Store analysis results
                 context.user_data['last_analyzed_token'] = {
@@ -530,25 +529,15 @@ class TelegramBot:
         """Show blockchain selection options."""
         language = context.user_data.get('language', 'en')
         
-        # Create keyboard with supported blockchains in 2 columns layout
+        # Create keyboard with supported blockchains
         keyboard = []
-        current_row = []
-        
         for chain_id, chain_info in SUPPORTED_BLOCKCHAINS.items():
-            button = InlineKeyboardButton(
-                f"{chain_info['icon']} {chain_info['name']} ({chain_info['symbol']})",
-                callback_data=f"chain_{chain_id}"
-            )
-            current_row.append(button)
-            
-            # Add row to keyboard when it has 2 buttons
-            if len(current_row) == 2:
-                keyboard.append(current_row)
-                current_row = []
-        
-        # Add remaining buttons if any
-        if current_row:
-            keyboard.append(current_row)
+            keyboard.append([
+                InlineKeyboardButton(
+                    f"{chain_info['icon']} {chain_info['name']} ({chain_info['symbol']})",
+                    callback_data=f"chain_{chain_id}"
+                )
+            ])
         
         reply_markup = InlineKeyboardMarkup(keyboard)
         
@@ -567,116 +556,146 @@ class TelegramBot:
         self.application.run_polling(allowed_updates=Update.ALL_TYPES)
 
     def _format_security_results(self, token_check_result: Dict[str, Any], language: str) -> str:
-        """Format security check results for display."""
-        if token_check_result.get("status") != "success":
-            return translator.get_text('check_failed', language)
+        """
+        Format security results for display.
         
-        token_info = token_check_result.get("token", {})
+        Args:
+            token_check_result: Token check result dictionary
+            language: User language
+            
+        Returns:
+            Formatted message string
+        """
         security = token_check_result.get("security", {})
+        token_info = token_check_result.get("token", {})
+        holders_data = token_check_result.get("holders", {})
         
-        # Format header
-        result_message = f"🔍 {translator.get_text('security_analysis_header', language)}\n\n"
+        # Tạo header phân tích hợp đồng với song ngữ
+        result_message = "🔍 PHÂN TÍCH SMART CONTRACT / SMART CONTRACT ANALYSIS 🔍\n\n"
         
-        # Basic token information
-        result_message += f"* {translator.get_text('token_info_header', language)}:\n"
-        result_message += f"- {translator.get_text('token_name', language)}: {token_info.get('name', 'N/A')}\n"
-        result_message += f"- {translator.get_text('token_symbol', language)}: {token_info.get('symbol', 'N/A')}\n"
+        # Thêm thông tin token cơ bản
+        result_message += "* THÔNG TIN TOKEN / TOKEN INFORMATION:\n"
         
-        # Format owner address
-        owner = token_info.get('owner', 'N/A')
-        owner_link = token_info.get('owner_link', '')
-        if owner != 'N/A' and owner_link:
-            owner_display = f"<a href='{owner_link}'>{owner}</a>"
+        # Thêm tên token nếu có
+        if token_info.get("name"):
+            result_message += f"- Tên / Name: {token_info.get('name', 'N/A')}\n"
+        
+        # Thêm ký hiệu token nếu có
+        if token_info.get("symbol"):
+            result_message += f"- Ký hiệu / Symbol: {token_info.get('symbol', 'N/A')}\n"
+        
+        # Thêm thông tin chủ hợp đồng
+        owner = token_info.get("owner", "N/A")
+        result_message += f"- Ví chủ hợp đồng / Contract Owner: {owner}\n"
+        
+        # Thêm tổng cung với định dạng nếu có
+        if token_info.get("total_supply") is not None:
+            supply = token_info.get("total_supply")
+            # Format total supply với dấu phân cách hàng nghìn
+            formatted_supply = "{:,.3f}".format(supply)
+            result_message += f"- Tổng cung / Total Supply: {formatted_supply}\n"
+        
+        # Thêm thông tin về holders
+        top_holders = holders_data.get("holders", [])
+        result_message += f"- Danh sách ví Holder lớn nhất / Top Holders:\n"
+        
+        if top_holders and len(top_holders) > 0:
+            # Liệt kê top 5 holders
+            for i, holder in enumerate(top_holders[:5], 1):
+                address = holder.get("address", "N/A")
+                percentage = holder.get("percentage", 0)
+                quantity = holder.get("quantity", 0)
+                formatted_quantity = "{:,.3f}".format(quantity)
+                result_message += f"  {i}. {address}: {formatted_quantity} ({percentage:.2f}%)\n"
         else:
-            owner_display = owner
-        result_message += f"- {translator.get_text('contract_owner', language)}: {owner_display}\n"
+            # Không có dữ liệu holder
+            result_message += "  Không có dữ liệu về holder / No holder data available\n"
         
-        # Format total supply
-        total_supply = token_info.get('total_supply', 'N/A')
-        if total_supply != 'N/A':
-            total_supply = f"{total_supply:,.3f}"
-        result_message += f"- {translator.get_text('total_supply', language)}: {total_supply}\n"
+        # Thêm thông tin bể thanh khoản
+        result_message += f"- Bể thanh khoản (DEX) / Liquidity Pool (DEX): Chưa xác minh / Not verified\n"
         
-        # Holders count
-        result_message += f"- {translator.get_text('holder_count', language)}: N/A\n"
+        # Thêm thông tin thuế
+        buy_tax = token_info.get("buy_tax", "0")
+        sell_tax = token_info.get("sell_tax", "0")
+        if buy_tax == "N/A" or not buy_tax:
+            buy_tax = "0"
+        if sell_tax == "N/A" or not sell_tax:
+            sell_tax = "0"
+        result_message += f"- Thuế giao dịch / Transfer Taxes: Mua / Buy {buy_tax}% / Bán / Sell {sell_tax}%\n\n"
         
-        # DEX liquidity
-        result_message += f"- {translator.get_text('dex_liquidity', language)}: {translator.get_text('not_verified', language)}\n"
+        # Thêm mục chức năng nguy hiểm
+        dangerous_functions_found = False
+        danger_items = []
         
-        # Transaction tax
-        result_message += f"- {translator.get_text('transaction_tax', language)}: {translator.get_text('tax_info', language, buy='0%', sell='0%')}\n\n"
+        # Kiểm tra tình trạng xác minh hợp đồng
+        is_verified = security.get("is_verified", False)
+        if not is_verified:
+            dangerous_functions_found = True
+            danger_items.append(f"⚠️ Hợp đồng chưa xác minh / Contract is not verified")
         
-        # Security issues
-        result_message += f"* {translator.get_text('dangerous_functions', language)}:\n"
+        # Kiểm tra hàm mint
+        has_mint = security.get("has_mint", False)
+        if has_mint:
+            dangerous_functions_found = True
+            danger_items.append(f"⚠️ Có thể phát hành thêm Token vô hạn / Can mint unlimited tokens")
         
-        # Check for dangerous functions
-        has_dangerous_functions = False
+        # Kiểm tra hàm blacklist
+        has_blacklist = security.get("has_blacklist", False)
+        if has_blacklist:
+            dangerous_functions_found = True
+            danger_items.append(f"⚠️ Hợp đồng có chức năng khóa ví người dùng / Contract can blacklist user wallets")
         
-        # First check if contract is verified
-        if not security.get('is_verified', True):
-            has_dangerous_functions = True
-            result_message += f"⚠️ {translator.get_text('contract_not_verified_warning', language)}\n"
+        # Kiểm tra hàm self-destruct
+        has_self_destruct = security.get("has_self_destruct", False)
+        if has_self_destruct:
+            dangerous_functions_found = True
+            danger_items.append(f"⚠️ Hợp đồng có chức năng tự hủy / Contract contains self-destruct function")
         
-        if security.get('has_mint', False):
-            has_dangerous_functions = True
-            result_message += f"⚠️ {translator.get_text('has_mint_warning', language)}\n"
-            
-        if security.get('has_blacklist', False):
-            has_dangerous_functions = True
-            result_message += f"⚠️ {translator.get_text('has_blacklist_warning', language)}\n"
-            
-        if security.get('has_pause', False):
-            has_dangerous_functions = True
-            result_message += f"⚠️ {translator.get_text('has_pause_warning', language)}\n"
-            
-        if security.get('has_revoke', False):
-            has_dangerous_functions = True
-            result_message += f"⚠️ {translator.get_text('has_revoke_warning', language)}\n"
-            
-        if security.get('is_honeypot', False):
-            has_dangerous_functions = True
-            result_message += f"⚠️ {translator.get_text('honeypot_warning', language)}\n"
-            
-        if security.get('has_self_destruct', False):
-            has_dangerous_functions = True
-            result_message += f"⚠️ {translator.get_text('has_self_destruct_warning', language)}\n"
+        # Kiểm tra hàm pause
+        has_pause = security.get("has_pause", False)
+        if has_pause:
+            dangerous_functions_found = True
+            danger_items.append(f"⚠️ Chủ hợp đồng có thể tạm dừng giao dịch (chỉ mua được, không bán được) / Can pause trading/transfers (buy only, cannot sell)")
         
-        if not has_dangerous_functions and security.get('is_verified', True):
-            result_message += f"✅ {translator.get_text('no_dangerous_functions', language)}\n"
+        # Kiểm tra hàm revoke/revert transactions
+        has_revoke = security.get("has_revoke", False)
+        if has_revoke:
+            dangerous_functions_found = True
+            danger_items.append(f"⚠️ Chủ hợp đồng có thể sửa đổi số dư từ ví người dùng / Contract can modify user wallet balances")
         
-        # Determine risk level
-        # High number of dangerous functions = critical risk
-        risk_level = "low"
-        dangerous_count = sum([
-            1 if not security.get('is_verified', True) else 0,
-            1 if security.get('has_mint', False) else 0,
-            1 if security.get('has_blacklist', False) else 0,
-            1 if security.get('has_pause', False) else 0,
-            1 if security.get('has_revoke', False) else 0,
-            1 if security.get('is_honeypot', False) else 0,
-            1 if security.get('has_self_destruct', False) else 0
-        ])
+        # Thêm kiểm tra honeypot
+        is_honeypot = security.get("is_honeypot", False)
+        if is_honeypot:
+            dangerous_functions_found = True
+            danger_items.append(f"⚠️ Có khả năng là honeypot / Potential honeypot detected")
         
-        if security.get('is_honeypot', False) or not security.get('is_verified', True):
-            risk_level = "critical"  # Honeypot or unverified contracts are critical risk
-        elif dangerous_count >= 3:
-            risk_level = "critical"  # 3+ dangerous functions = critical risk
-        elif dangerous_count >= 1:
-            risk_level = "high"      # 1-2 dangerous functions = high risk
-        
-        # Risk assessment
-        if risk_level == "critical":
-            result_message += f"\n* {translator.get_text('risk_assessment', language)}: {translator.get_text('critical_risk', language)}\n"
-            result_message += f"{translator.get_text('critical_risk_description', language)}\n\n"
-        elif risk_level == "high":
-            result_message += f"\n* {translator.get_text('risk_assessment', language)}: {translator.get_text('high_risk', language)}\n"
-            result_message += f"{translator.get_text('high_risk_description', language)}\n\n"
+        # Hiển thị mục chức năng nguy hiểm
+        result_message += f"* CÁC CHỨC NĂNG NGUY HIỂM / DANGEROUS FUNCTIONS:\n"
+        if dangerous_functions_found:
+            for item in danger_items:
+                result_message += f"{item}\n"
         else:
-            result_message += f"\n* {translator.get_text('risk_assessment', language)}: {translator.get_text('risk_level_low', language)}\n"
-            result_message += f"{translator.get_text('low_risk_description', language)}\n\n"
+            result_message += f"Không phát hiện các chức năng nguy hiểm trong hợp đồng này / No dangerous functions detected in this contract\n"
         
-        # Disclaimer
-        result_message += f"{translator.get_text('analysis_disclaimer', language)}"
+        # Xác định mức độ rủi ro dựa trên các chức năng cụ thể
+        risk_level = ""
+        risk_desc = ""
+        if not is_verified or has_self_destruct or has_revoke:
+            risk_level = "CỰC KỲ RỦI RO / EXTREMELY RISKY"
+            risk_desc = "CỰC KỲ RỦI RO: Hợp đồng này chứa lỗ hổng rất nguy hiểm, nguy cơ bị lừa đảo khi đầu tư rất cao, hãy cân nhắc thật kỹ / EXTREMELY RISKY: This contract contains very dangerous vulnerabilities, the risk of fraud when investing is very high, please consider carefully"
+        elif has_blacklist or has_pause or has_mint:
+            risk_level = "RỦI RO CAO / HIGH RISK"
+            risk_desc = "RỦI RO CAO: Hợp đồng tích hợp những chức năng có khả năng gây thiệt hại cho NĐT, hãy tìm hiểu thật kỹ về dự án trước khi ra quyết định đầu tư / HIGH RISK: The contract integrates functions that can potentially harm investors, research the project carefully before making an investment decision"
+        else:
+            risk_level = "ÍT RỦI RO / LOW RISK"
+            risk_desc = "ÍT RỦI RO: Hợp đồng không có chức năng nguy hiểm, cần đánh giá thêm các yếu tố khác trước khi ra quyết định / LOW RISK: The contract has no dangerous functions, consider other factors before making a decision"
+        
+        # Thêm đánh giá BỎ định dạng HTML
+        result_message += f"\n* ĐÁNH GIÁ / ASSESSMENT: {risk_level}\n"
+        result_message += f"{risk_desc}\n\n"
+        
+        # Thêm disclaimer
+        result_message += f"Ghi chú: Bot tổng hợp và đánh giá độ rủi ro dựa vào source code trực tiếp trên Blockchain, thông tin mang tính chất tham khảo. Người dùng tự cân nhắc và chịu trách nhiệm với quyết định đầu tư của mình! / Note: Bot analyzes risk based on contract source code directly on the Blockchain, information is for reference only. Users are responsible for their own research and investment decisions!"
         
         return result_message
     

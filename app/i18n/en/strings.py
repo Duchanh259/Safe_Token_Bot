@@ -18,7 +18,7 @@ EN_STRINGS = {
     'command_help': """Available commands:
 /start - Start the bot
 /help - Show help
-/check - Check token security and advanced analysis
+/check - Check token security
 /report - Generate PDF report
 /balance - View your balance
 /referral - View your referral link
@@ -35,10 +35,6 @@ EN_STRINGS = {
     'referral_stats': 'Your referral statistics:\n- Direct referrals (F1): {direct}\n- Indirect referrals (F2): {indirect}',
     
     # Token analysis
-    'select_analysis_type': 'Please select the type of analysis:',
-    'basic_security_check': 'Basic Security Check',
-    'advanced_analysis': 'Advanced Detailed Analysis',
-    'analysis_type_selected': 'You selected: {analysis_type} analysis',
     'enter_address': 'Please enter the token contract address:',
     'processing_address': 'Processing the address...',
     'address_required': 'Please enter a valid contract address.',
@@ -46,14 +42,14 @@ EN_STRINGS = {
     'security_check_results': '🔒 SECURITY CHECK RESULTS 🔒\n\n✅ No honeypot detected\n✅ Contract is verified\n✅ No self-destruct function\n✅ No blacklist function\n✅ No mint function\n\nOverall Security Score: 95/100',
     'advanced_analysis_results': '📊 ADVANCED ANALYSIS RESULTS 📊\n\nToken Distribution:\n- Top 10 holders own 35% of supply\n- Developer wallet holds 3% of supply\n- Liquidity locked for 365 days\n\nSwap Impact (1 ETH):\n- Buy tax: 2%\n- Sell tax: 3%\n- Price impact: 0.5%\n\nRisk Assessment: LOW',
     'token_analysis_result': 'Token Analysis Results:',
-    'token_name': 'Name: {name}',
-    'token_symbol': 'Symbol: {symbol}',
-    'token_total_supply': 'Total Supply: {supply}',
-    'token_decimals': 'Decimals: {decimals}',
-    'token_address': 'Contract Address: {address}',
-    'token_blockchain': 'Blockchain: {blockchain}',
-    'token_owner': 'Owner: {owner}',
-    'token_risk_level': 'Risk Level: {level}',
+    'token_name': 'Name',
+    'token_symbol': 'Symbol',
+    'token_total_supply': 'Total Supply',
+    'token_decimals': 'Decimals',
+    'token_address': 'Contract Address',
+    'token_blockchain': 'Blockchain',
+    'token_owner': 'Owner',
+    'token_risk_level': 'Risk Level',
     'token_security_issues': 'Security Issues:',
     'token_no_security_issues': 'No security issues found!',
     'token_not_found': 'Token not found or not a valid token',
@@ -101,7 +97,7 @@ EN_STRINGS = {
     'command_list': "List of commands:\n" \
                   "/start - Start the bot\n" \
                   "/help - Show help\n" \
-                  "/check - Check token security and advanced analysis\n" \
+                  "/check - Check token security\n" \
                   "/report - Generate PDF report\n" \
                   "/balance - Check your balance\n" \
                   "/referral - View your referral link\n" \
@@ -109,53 +105,43 @@ EN_STRINGS = {
                   "/language - Change language",
     'command_list_intro': "Here are the commands to use the Bot:",
     
-    # Token security check
-    'token_security_check': 'TOKEN SECURITY CHECK',
-    'honeypot_check': 'Is honeypot',
-    'contract_verified_old': 'Contract is verified' if '{result}' else 'WARNING: Contract is not verified',
-    'self_destruct_check': 'No self-destruct function' if not '{result}' else 'WARNING: Contract contains self-destruct function',
-    'blacklist_check': 'No blacklist function' if not '{result}' else 'WARNING: Contract contains blacklist function',
-    'mint_function_check': 'No mint function' if not '{result}' else 'WARNING: Contract contains mint function',
-    'security_score': 'Overall Security Score: {score}/100',
-    
-    # Advanced analysis
-    'advanced_analysis_results_title': 'ADVANCED ANALYSIS RESULTS',
-    'token_distribution': 'Token Distribution',
-    'top_holders': 'Top {count} holders own {percentage}% of total supply',
-    'largest_holder': 'Largest holder owns {percentage}% of total supply',
-    'liquidity_status': 'Liquidity locked for {days} days',
-    'swap_impact': 'Swap Impact (1 ETH)',
-    'buy_tax': 'Buy tax: {percentage}%',
-    'sell_tax': 'Sell tax: {percentage}%',
-    'price_impact': 'Price impact: {percentage}%',
-    'risk_assessment': 'Risk Assessment',
-    
-    # Contract analysis messages
-    'contract_analysis_title': 'SMART CONTRACT ANALYSIS',
-    'basic_info_title': 'TOKEN INFORMATION',
-    'dangerous_functions_title': 'DANGEROUS FUNCTIONS',
-    'contract_assessment': 'ASSESSMENT',
-    'contract_verified': 'Contract verified',
-    'contract_not_verified': 'Contract is not verified',
-    'unlimited_mint': 'Can mint unlimited tokens',
-    'blacklist_function_warning': 'Contract can blacklist user wallets',
-    'selfdestruct_function_warning': 'Contract contains self-destruct function',
-    'pause_function_warning': 'Can pause trading/transfers (buy only, cannot sell)',
-    'modify_balance_warning': 'Contract can modify user wallet balances',
-    'honeypot_warning': 'Potential honeypot detected',
-    'no_dangerous_functions': 'No dangerous functions detected in this contract',
-    'top_holders_list': 'Top holders',
-    'liquidity_pool': 'Liquidity Pool (DEX): {status}',
-    'token_taxes': 'Transfer Taxes: Buy {buy}% / Sell {sell}%',
-    'not_verified': 'Not verified',
-    'disclaimer': 'Note: Bot analyzes risk based on contract source code directly on the Blockchain, information is for reference only. Users are responsible for their own research and investment decisions!',
-    'no_holder_data': 'No holder data available',
+    # Security analysis header
+    'security_analysis_header': 'SMART CONTRACT ANALYSIS',
+    'token_info_header': 'TOKEN INFORMATION',
+    'dangerous_functions': 'DANGEROUS FUNCTIONS',
+    'risk_assessment': 'ASSESSMENT',
     
     # Token info
-    'contract_owner': 'Contract Owner: {owner}',
+    'total_supply': 'Total Supply',
+    'holder_count': 'Total Holders',
+    'dex_liquidity': 'Liquidity Pool (DEX)',
+    'transaction_tax': 'Transaction Tax',
+    'tax_info': 'Buy {buy} / Sell {sell}',
+    'contract_owner': 'Contract Owner',
     
-    # Risk level descriptions
-    'risk_level_critical_desc': 'EXTREMELY RISKY: This contract contains very dangerous vulnerabilities, the risk of fraud when investing is very high, please consider carefully',
-    'risk_level_high_desc': 'HIGH RISK: The contract integrates functions that can potentially harm investors, research the project carefully before making an investment decision',
-    'risk_level_low_desc': 'LOW RISK: The contract has no dangerous functions, consider other factors before making a decision',
+    # Dangerous functions
+    'has_mint_warning': 'Can mint unlimited tokens',
+    'has_blacklist_warning': 'Contract has blacklist function for user wallets',
+    'has_pause_warning': 'Contract owner can pause trading (can buy but cannot sell)',
+    'has_revoke_warning': 'Contract owner can modify balances from user wallets',
+    'has_self_destruct_warning': 'Contract contains self-destruct function',
+    'honeypot_warning': 'Potentially a honeypot',
+    'no_dangerous_functions': 'No dangerous functions detected in this contract',
+    'contract_not_verified_warning': 'Contract is not verified on Etherscan',
+    
+    # Risk assessment
+    'critical_risk': 'EXTREMELY RISKY',
+    'critical_risk_description': 'EXTREMELY RISKY: This contract contains very dangerous vulnerabilities, the risk of fraud when investing is very high, please consider carefully',
+    'high_risk': 'HIGH RISK',
+    'high_risk_description': 'HIGH RISK: The contract integrates functions that can potentially harm investors, research the project carefully before making an investment decision',
+    'low_risk_description': 'No dangerous functions detected in this contract, carefully research other factors before making an investment decision',
+    
+    # Check result
+    'check_failed': 'Token check failed. Please try again later.',
+    
+    # Status
+    'not_verified': 'Not verified',
+    
+    # Disclaimer
+    'analysis_disclaimer': 'Note: Bot analyzes risk based on contract source code directly on the Blockchain, information is for reference only. Users are responsible for their own research and investment decisions!',
 } 
